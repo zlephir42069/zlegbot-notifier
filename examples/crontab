@@ -1,0 +1,15 @@
+# Run notifier every 15 minutes from the directory that holds notifier.yaml.
+# Cron does not load a shell profile. Set URLs in the crontab or in a file
+# this line sources. Keep real URLs out of git.
+#
+# The grace window should be longer than this interval (the example schedule
+# uses 24h) so a late run still posts.
+#
+# NOTIFIER_DISCORD_URL=https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN
+# NOTIFIER_DISCORD_TOKEN=replace-me
+# NOTIFIER_DISCORD_CHANNEL=123456789012345678
+# NOTIFIER_SLACK_URL=https://hooks.slack.com/services/T000/B000/XXXXXXXX
+# NOTIFIER_WEBHOOK_URL=https://example.com/hooks/notifier
+# NOTIFIER_WEBHOOK_TOKEN=replace-me
+#
+*/15 * * * * cd /opt/notifier && /usr/local/bin/notifier run --config /opt/notifier/notifier.yaml

@@ -1,0 +1,15 @@
+# Fires the oneshot service every 15 minutes.
+# Persistent=true runs a missed tick after the machine was off. A missed
+# announcement posts only when the tick is still inside that item's grace
+# window. Make grace longer than 15 minutes.
+
+[Unit]
+Description=Run notifier every 15 minutes
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+Unit=notifier.service
+
+[Install]
+WantedBy=timers.target
