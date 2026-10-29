@@ -1,0 +1,65 @@
+# Copy to notifier.yaml. Secrets stay in the environment:
+#   ${NOTIFIER_DISCORD_URL}
+#   ${NOTIFIER_DISCORD_TOKEN}  ${NOTIFIER_DISCORD_CHANNEL}
+#   ${NOTIFIER_SLACK_URL}
+#   ${NOTIFIER_WEBHOOK_URL}  ${NOTIFIER_WEBHOOK_TOKEN}
+#
+# Paths are relative to this file. Quote timestamps. A bare number for grace
+# is seconds; write 24h for hours. ${NAME} is replaced when the file loads.
+# $${NAME} stays as the literal ${NAME}. Each announcement is one item with
+# its own id. A sent id is never posted again.
+
+state: .notifier/state.json
+grace: 24h
+lock_timeout: 60
+
+targets:
+  discord:
+    type: discord
+    url: ${NOTIFIER_DISCORD_URL}
+  discord_bot:
+    type: discord_bot
+    token: ${NOTIFIER_DISCORD_TOKEN}
+    channel: ${NOTIFIER_DISCORD_CHANNEL}
+  slack:
+    type: slack
+    url: ${NOTIFIER_SLACK_URL}
+  hook:
+    type: webhook
+    url: ${NOTIFIER_WEBHOOK_URL}
+    headers:
+      Authorization: Bearer ${NOTIFIER_WEBHOOK_TOKEN}
+
+items:
+  # Inside the default 24h grace after this instant, the next run posts once.
+  - id: release-1-2
+    due: "2026-12-01T15:00:00+00:00"
+    target: discord
+    message: "Release {version} is scheduled for {due}."
+    values:
+      version: "1.2.0"
+
+  - id: weekly-note
+    due: "2026-12-02T09:00:00-05:00"
+    target: slack
+    grace: 6h
+    message: "Scheduled note: {title}."
+    values:
+      title: status
+
+  - id: maintenance
+    due: "2026-12-03T01:00:00Z"
+    target: hook
+    message: "Maintenance window {id} starts at {due}."
+
+  # Opt in for one user id. Without `mentions`, Discord receives
+  # allowed_mentions.parse []. Quote snowflakes so YAML does not round them.
+  - id: room-reminder
+    due: "2026-12-04T18:00:00+00:00"
+    target: discord_bot
+    message: "Reminder for {room}: the notes are ready."
+    values:
+      room: general
+    mentions:
+      parse: ["users"]
+      users: ["123456789012345678"]

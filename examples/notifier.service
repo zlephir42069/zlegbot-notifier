@@ -1,0 +1,13 @@
+# systemd oneshot. Install with notifier.timer.
+# /etc/notifier.env holds NOTIFIER_* values, one KEY=value per line.
+# That file is not part of this repo. Do not commit it.
+# Change User= if the service should not run as root.
+
+[Unit]
+Description=Post due notifier announcements once
+
+[Service]
+Type=oneshot
+WorkingDirectory=/var/lib/notifier
+EnvironmentFile=/etc/notifier.env
+ExecStart=/usr/local/bin/notifier run --config /etc/notifier.yaml
